@@ -6,25 +6,60 @@
 <body>
     <h1>註冊</h1>
     <form id="registrationForm">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
         <label for="name">姓名:</label><br>
         <input type="text" id="name" name="name" required><br><br>
         <label for="zipcode">Zipcode:</label><br>
         <input type="text" id="zipcode" name="zipcode" required><br><br>
-        <button type="submit">提交</button>
+        <label for="password">密碼:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">註冊</button>
     </form>
 
-    <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // 防止表單提交後頁面刷新
+    <p id="message"></p>
 
+    <script>
+        // 允許註冊的 Email 清單
+        const allowedEmails = ["user1@example.com", "user2@example.com"];
+
+        // 檢查 Email 是否在允許的清單中
+        function isEmailAllowed(email) {
+            return allowedEmails.includes(email);
+        }
+
+        // 檢查 Email 是否已註冊
+        function isEmailRegistered(email) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            return users.some(user => user.email === email);
+        }
+
+        // 註冊表單提交事件
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
             const name = document.getElementById('name').value;
             const zipcode = document.getElementById('zipcode').value;
+            const password = document.getElementById('password').value;
 
-            // 將數據保存到本地存儲
-            localStorage.setItem('name', name);
-            localStorage.setItem('zipcode', zipcode);
+            if (!isEmailAllowed(email)) {
+                document.getElementById('message').innerText = '此 Email 不在允許的清單中。';
+                return;
+            }
 
-            alert('註冊成功！');
+            if (isEmailRegistered(email)) {
+                document.getElementById('message').innerText = '此 Email 已註冊，請登錄。';
+                return;
+            }
+
+            // 保存用戶數據
+            const user = { email, name, zipcode, password };
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            document.getElementById('message').innerText = '註冊成功！';
         });
     </script>
 </body>
