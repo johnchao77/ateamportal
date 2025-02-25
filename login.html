@@ -1,45 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登錄頁面</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>登錄</h1>
-    <form id="loginForm">
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="password">密碼:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">登錄</button>
-    </form>
-
-    <p id="message"></p>
-    <div id="userInfo" style="display: none;">
-        <h2>用戶資料</h2>
-        <p><strong>姓名:</strong> <span id="userName"></span></p>
-        <p><strong>Zipcode:</strong> <span id="userZipcode"></span></p>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="errorMessage" class="error"></p>
+        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
     </div>
-
-    <script>
-        // 登錄表單提交事件
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(user => user.email === email && user.password === password);
-
-            if (user) {
-                document.getElementById('message').innerText = '登錄成功！';
-                document.getElementById('userInfo').style.display = 'block';
-                document.getElementById('userName').innerText = user.name;
-                document.getElementById('userZipcode').innerText = user.zipcode;
-            } else {
-                document.getElementById('message').innerText = 'Email 或密碼錯誤。';
-            }
-        });
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>
