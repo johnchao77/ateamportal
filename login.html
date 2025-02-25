@@ -17,9 +17,50 @@
         <p id="errorMessage" class="error"></p>
         <p>Don't have an account? <a href="signup.html">Sign up</a></p>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="login.js"></script>
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6kyv8L95lcV6QvyzaqLUCPNMy98n_REs",
+            authDomain: "ateamportal-f7c33.firebaseapp.com",
+            projectId: "ateamportal-f7c33",
+            storageBucket: "ateamportal-f7c33.firebasestorage.app",
+            messagingSenderId: "240375132899",
+            appId: "1:240375132899:web:f9819b939084c719f88bd6",
+            measurementId: "G-3F15CRPYKK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Fetch user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    alert(`Welcome back, ${userDoc.data().name}!`);
+                    // Redirect to account info page or display info here
+                } else {
+                    alert('User data not found.');
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 'Password is incorrect, please re-enter.';
+            }
+        });
+    </script>
 </body>
 </html>
