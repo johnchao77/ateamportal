@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="zipcode">Zip Code:</label>
+            <input type="text" id="zipcode" name="zipcode" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" minlength="8" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p id="errorMessage" class="error"></p>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6kyv8L95lcV6QvyzaqLUCPNMy98n_REs",
+            authDomain: "ateamportal-f7c33.firebaseapp.com",
+            projectId: "ateamportal-f7c33",
+            storageBucket: "ateamportal-f7c33.firebasestorage.app",
+            messagingSenderId: "240375132899",
+            appId: "1:240375132899:web:f9819b939084c719f88bd6",
+            measurementId: "G-3F15CRPYKK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const zipcode = document.getElementById('zipcode').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Save user data to Firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    name: name,
+                    zipcode: zipcode,
+                    email: email
+                });
+
+                alert('Signup successful!');
+                window.location.href = 'login.html';
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    document.getElementById('errorMessage').textContent = 'Email already registered. Please login.';
+                } else {
+                    document.getElementById('errorMessage').textContent = error.message;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
